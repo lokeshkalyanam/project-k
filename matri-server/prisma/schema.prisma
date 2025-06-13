@@ -1,0 +1,129 @@
+// Prisma client generator
+generator client {
+    provider = "prisma-client-js"
+}
+
+// PostgreSQL database connection
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ==============================
+// User Model
+// ==============================
+model User {
+    id                String  @id @default(uuid()) // Primary unique identifier
+    profileId         String  @unique // Profile reference ID (used externally)
+    firstName         String // First name of the user
+    lastName          String // Last name of the user
+    email             String? @unique // Optional but unique email address
+    phone             String? // Optional phone number (can be shared across accounts)
+    passwordHash      String? // Optional hashed password
+    isEmailVerified   Boolean @default(false) // Flag to verify email
+    isPhoneVerified   Boolean @default(false) // Flag to verify phone number
+    isProfileVerified Boolean @default(false) // Admin-approved profile verification
+    isActive          Boolean @default(false) // Controls account access (active/inactive)
+
+    gender      Gender // Gender (enum)
+    dateOfBirth DateTime // Date of birth
+    createdFor  CreatedFor @default(SELF) // Who the profile was created for (enum)
+
+    religion     String? // Optional religion field
+    caste        String? // Optional caste field
+    motherTongue String? // Optional mother tongue
+    height       Float? // Optional height in cm
+    profession   String? // Optional profession or job title
+    city         String? // Optional city
+    state        String? // Optional state
+    country      String? // Optional country
+
+    // Relations
+    sessions          Session[] // Active or past sessions
+    otps              Otp[] // OTP history
+    interestsSent     Interest[] @relation("InterestsSent") // Interests sent to others
+    interestsReceived Interest[] @relation("InterestsReceived") // Interests received from others
+
+    createdAt DateTime @default(now()) // Timestamp of creation
+    updatedAt DateTime @updatedAt // Auto-updated timestamp
+}
+
+// ==============================
+// OTP Model
+// ==============================
+model Otp {
+    id         String    @id @default(uuid()) // Unique identifier
+    userId     String // Foreign key to User
+    code       String // OTP code
+    type       OtpType // Type of OTP (email or phone)
+    expiresAt  DateTime // Expiration time of OTP
+    verifiedAt DateTime? // When the OTP was verified
+    attempts   Int       @default(0) // How many times it was tried
+    createdAt  DateTime  @default(now()) // Creation timestamp
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User
+}
+
+// ==============================
+// Session Model
+// ==============================
+model Session {
+    id         String   @id @default(uuid()) // Unique session ID
+    userId     String // Foreign key to User
+    ipAddress  String // IP address of the session
+    deviceInfo String // Device metadata
+    userAgent  String // User-Agent string (browser info)
+    createdAt  DateTime @default(now()) // Timestamp of session creation
+    expiresAt  DateTime // When the session expires
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User
+}
+
+// ==============================
+// Interest Model
+// ==============================
+model Interest {
+    id         String         @id @default(uuid()) // Unique ID for interest record
+    senderId   String // User who sent the interest
+    receiverId String // User who received the interest
+    status     InterestStatus @default(PENDING) // Status of interest (Pending, Accepted, Rejected)
+    createdAt  DateTime       @default(now()) // Timestamp when created
+    updatedAt  DateTime       @updatedAt // Timestamp when last updated
+
+    sender   User @relation("InterestsSent", fields: [senderId], references: [id]) // Sender relation
+    receiver User @relation("InterestsReceived", fields: [receiverId], references: [id]) // Receiver relation
+}
+
+// ==============================
+// Enums
+// ==============================
+
+// Gender identity
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+// Who the profile was created for
+enum CreatedFor {
+    SELF
+    SON
+    DAUGHTER
+    SIBLING
+    FRIEND
+    OTHER
+}
+
+// OTP type
+enum OtpType {
+    PHONE
+    EMAIL
+}
+
+// Interest status enum
+enum InterestStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
+}
