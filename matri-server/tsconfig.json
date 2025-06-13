@@ -1,15 +1,86 @@
 {
   "compilerOptions": {
+    /**
+     * Set the ECMAScript target version for transpiled JavaScript.
+     * ES2020 enables modern JS features while ensuring broad Node.js compatibility.
+     */
     "target": "ES2020",
+    /**
+     * Specify the module system used in the output JS.
+     * CommonJS is required for compatibility with Node.js (require, module.exports).
+     */
     "module": "CommonJS",
+    /**
+     * Directory where the compiled JavaScript files will be placed.
+     */
     "outDir": "./dist",
+    /**
+     * Root directory for TypeScript source files.
+     */
     "rootDir": "./src",
+    /**
+     * Enable all strict type-checking options.
+     * Highly recommended for catching type errors early.
+     */
     "strict": true,
+    /**
+     * Enables compatibility between CommonJS and ES Modules.
+     * Allows default imports from modules with `module.exports`.
+     */
     "esModuleInterop": true,
+    /**
+     * Skips type checking of declaration files (`*.d.ts`).
+     * Improves build speed by avoiding third-party library type checks.
+     */
     "skipLibCheck": true,
+    /**
+     * Use Node-style module resolution for resolving modules.
+     */
+    "moduleResolution": "node",
+    /**
+     * Ensures consistent casing in file and folder names across OS.
+     * Prevents issues when moving between Windows/macOS and Linux.
+     */
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    /**
+     * Allow importing `.json` files directly in TypeScript.
+     */
+    "resolveJsonModule": true,
+    /**
+     * Set the base path for non-relative module imports.
+     * Enables cleaner absolute paths like `@/modules/auth` instead of `../../../`.
+     */
+    "baseUrl": "src",
+    /**
+     * Specify global type definitions included during compilation.
+     * Includes Node.js environment types like `process` and `__dirname`.
+     */
+    "types": [
+      "node"
+    ],
+    /**
+     * Define custom import path aliases.
+     * Example: `@/utils/logger` resolves to `src/utils/logger`.
+     */
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  /**
+   * Specify the files to include in the compilation.
+   * Includes all TypeScript files under `src/`.
+   */
+  "include": [
+    "src/**/*.ts"
+  ],
+  /**
+   * Exclude specific folders from compilation.
+   * Skips compiled output and dependencies.
+   */
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

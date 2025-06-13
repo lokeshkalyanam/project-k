@@ -2,23 +2,36 @@
   "name": "matri-server",
   "version": "1.0.0",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register src/index.ts",
     "build": "tsc",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0"
   },
   "dependencies": {
-    "express": "^5.1.0",
-    "zod": "^3.22.2",
-    "prisma": "^5.10.0",
-    "@prisma/client": "^5.10.0",
+    "@prisma/client": "^6.9.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
-    "cors": "^2.8.5"
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
+    "nanoid": "^5.1.5",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^22.15.30",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^22.15.31",
+    "@typescript-eslint/eslint-plugin": "^8.34.0",
+    "@typescript-eslint/parser": "^8.34.0",
+    "eslint": "^9.28.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prisma": "^6.9.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.5",
-    "eslint": "^8.56.0"
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "~5.3.3",
+    "typescript-eslint": "^8.34.0"
   }
 }
