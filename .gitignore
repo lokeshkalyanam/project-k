@@ -1,77 +1,67 @@
-# === Node.js / Common ===
+# === Node.js / General ===
 node_modules/
-.env
-.env.*          # for .env.development, .env.production
 dist/
 build/
-coverage/
 .cache/
-.next/
-out/
+coverage/
+*.log
+*.tsbuildinfo
+*.swp
+*.swo
+
+# === Environment Files ===
+.env
+.env.*
+!.env.example
+
+# === IDE / Editor ===
 .vscode/
 .idea/
-*.log
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# === Logs ===
-*.log
-logs/
-*.tsbuildinfo
-
-# === TypeScript ===
-*.tsbuildinfo
-
-# === VS Code ===
-.vscode/*
-!.vscode/settings.json
-
-# === Next.js (matri-client) ===
+# === Client (Next.js / matri-client) ===
 .next/
 out/
 public/static/
 public/.cache/
 src/**/*.local.ts
 
-# === Tailwind CSS ===
-**/tailwind.config.js
-**/tailwind.config.ts
+# Do NOT ignore Tailwind, PostCSS, Chakra configs:
+# tailwind.config.ts
+# postcss.config.js
+# src/theme/*.ts
 
-# === Chakra UI Custom Themes ===
-src/theme/*.ts
-
-# === Prisma / matri-server ===
+# === Server (Node.js / matri-server) ===
 prisma/migrations/
 prisma/dev.db
 *.sqlite
 *.db
-*.env
 *.bak
 
-# === OS / IDE ===
-.DS_Store
-Thumbs.db
-
-# === Lint / Formatter ===
-.eslintcache
-.prettier-cache/
-
-# === Testing / Coverage ===
+# === Testing ===
 coverage/
 jest-cache/
 *.spec.ts
 *.test.ts
 
-# === Git / Patch Files ===
+# === Lint / Formatting ===
+.eslintcache
+.prettier-cache/
+
+# === Git Patches / Conflicts ===
 *.patch
 *.orig
 *.rej
-*.swp
-*.swo
 
-# === Optional (you can keep or ignore) ===
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
+# === Optional: lockfiles (if using one package manager only) ===
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

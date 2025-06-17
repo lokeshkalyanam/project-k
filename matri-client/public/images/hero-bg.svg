@@ -1,0 +1,21 @@
+<!-- Save this as /public/images/hero-love.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="url(#grad1)" />
+  <defs>
+    <linearGradient id="grad1" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe6f0" />
+      <stop offset="1" stop-color="#f2f9ff" />
+    </linearGradient>
+  </defs>
+
+  <g opacity="0.3">
+    <circle cx="120" cy="100" r="40" fill="#FFC0CB"/>
+    <circle cx="700" cy="500" r="50" fill="#DBB2FF"/>
+    <circle cx="400" cy="300" r="60" fill="#FFE4B5"/>
+    <path d="M230 400c0-50 60-90 90-30s90-30 90 30-60 90-90 30-90 30-90-30z" fill="#FF69B4" />
+  </g>
+
+  <text x="50%" y="50%" text-anchor="middle" fill="#aa336a" font-size="32" font-family="Poppins, sans-serif">
+    
+  </text>
+</svg>
