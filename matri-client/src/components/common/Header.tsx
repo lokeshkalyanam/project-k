@@ -15,35 +15,19 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
 import { HelpCircle, LogIn, Info, PhoneCall, MessageCircle } from 'lucide-react'
 
 /**
- * Chakra UI + Framer Motion Flex wrapper for animated layout transitions.
- */
-const MotionFlex = motion(Flex)
-/**
- * Chakra UI + Framer Motion Button wrapper for animated interactions.
- */
-const MotionButton = motion(Button)
-
-/**
- * `Header` is the top navigation bar of the MatriLink application.
- * It includes the brand name, a tagline, help menu, and login button.
- *
- * - Responsive and sticky at the top.
- * - Uses Chakra UI for design and layout.
- * - Animated with Framer Motion for smooth entrance.
- * - Lucide icons used for modern visuals.
+ * `Header` is the top navigation bar of the application.
  *
  * @component
- * @returns {JSX.Element} The rendered header component.
+ * @returns {JSX.Element} Header component
  */
 export default function Header(): JSX.Element {
   const router = useRouter()
-  const bgColor = useColorModeValue('white', 'gray.800') // Dynamic background for light/dark mode
-  const textColor = useColorModeValue('gray.600', 'gray.300') // Dynamic text color
-  const shadow = useColorModeValue('sm', 'md') // Shadow depth based on theme
+  const bgColor = useColorModeValue('white', 'gray.800')
+  const textColor = useColorModeValue('gray.600', 'gray.300')
+  const shadow = useColorModeValue('sm', 'md')
 
   return (
     <Box
@@ -57,14 +41,11 @@ export default function Header(): JSX.Element {
       zIndex="50"
       w="100%"
     >
-      <MotionFlex
+      <Flex
         align={{ base: 'start', md: 'center' }}
         direction={{ base: 'column', md: 'row' }}
         justify="space-between"
         gap={{ base: 2, md: 0 }}
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
       >
         {/* Branding */}
         <VStack
@@ -95,11 +76,10 @@ export default function Header(): JSX.Element {
           {/* Help Dropdown */}
           <Menu>
             <MenuButton
-              as={MotionButton}
+              as={Button}
               variant="ghost"
               colorScheme="teal"
               leftIcon={<Icon as={HelpCircle} />}
-              whileHover={{ scale: 1.05 }}
             >
               Help
             </MenuButton>
@@ -126,16 +106,15 @@ export default function Header(): JSX.Element {
           </Menu>
 
           {/* Login Button */}
-          <MotionButton
+          <Button
             colorScheme="teal"
             leftIcon={<Icon as={LogIn} />}
             onClick={() => router.push('/login')}
-            whileHover={{ scale: 1.05 }}
           >
             Login
-          </MotionButton>
+          </Button>
         </Flex>
-      </MotionFlex>
+      </Flex>
     </Box>
   )
 }

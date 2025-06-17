@@ -10,7 +10,6 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { ShieldCheck, Filter, HeartHandshake } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 /**
  * List of core features to display in the FeatureCards section.
@@ -34,14 +33,10 @@ const features = [
   },
 ]
 
-// Extend Chakra's Box with motion support
-const MotionBox = motion(Box)
-
 /**
- * FeatureCards component showcases the platform's key benefits using animated cards.
+ * FeatureCards component showcases the platform's key benefits.
  *
  * - Uses Chakra UI for layout and styling.
- * - Framer Motion provides scroll-in animation and hover effects.
  * - Responsive layout: single column on mobile, three columns on desktop.
  *
  * Each card includes:
@@ -49,7 +44,7 @@ const MotionBox = motion(Box)
  * - A bold title
  * - A brief description
  *
- * @returns {JSX.Element} A section with animated feature cards.
+ * @returns {JSX.Element} A section with feature cards.
  */
 export default function FeatureCards(): JSX.Element {
   return (
@@ -60,18 +55,15 @@ export default function FeatureCards(): JSX.Element {
         maxW="7xl"
         mx="auto"
       >
-        {features.map((feature, index) => (
-          <MotionBox
+        {features.map((feature) => (
+          <Box
             key={feature.title}
             bg={useColorModeValue('white', 'gray.800')}
             borderRadius="2xl"
             boxShadow="md"
             p={6}
-            whileHover={{ scale: 1.03 }}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.2 }}
-            viewport={{ once: true }}
+            transition="all 0.2s"
+            _hover={{ transform: 'scale(1.03)' }}
           >
             <VStack spacing={4} align="start">
               <Flex
@@ -89,7 +81,7 @@ export default function FeatureCards(): JSX.Element {
               </Text>
               <Text color="gray.600">{feature.description}</Text>
             </VStack>
-          </MotionBox>
+          </Box>
         ))}
       </SimpleGrid>
     </Box>
