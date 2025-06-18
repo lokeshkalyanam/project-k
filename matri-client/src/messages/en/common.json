@@ -1,0 +1,20 @@
+{
+  "hero": {
+    "title": "Find Your Perfect Match",
+    "description": "Join the most trusted matrimony platform to find your life partner."
+  },
+  "header": {
+    "brand": {
+      "main": "Kal",
+      "highlight": "yanam",
+      "tagline": "Modern Connections. Traditional Values."
+    },
+    "help": "Help",
+    "helpItems": {
+      "about": "About Us",
+      "contact": "Contact Support",
+      "faq": "FAQ"
+    },
+    "login": "Login"
+  }
+}

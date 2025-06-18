@@ -9,7 +9,7 @@ import Footer from '@/components/common/Footer'
 
 /**
  * HomePage component for the root route (`/`) of the matrimony platform.
- * 
+ *
  * This is the main landing page that includes:
  * - Header: Top navigation and branding
  * - HeroSection: Introduction banner or hero content

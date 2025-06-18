@@ -16,15 +16,25 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 import { HelpCircle, LogIn, Info, PhoneCall, MessageCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 /**
- * `Header` is the top navigation bar of the application.
+ * Renders the top navigation bar for the application.
+ *
+ * Includes:
+ * - Branding with dynamic internationalized text
+ * - Navigation buttons (Help dropdown and Login)
+ * - Sticky positioning for consistent visibility
+ *
+ * Internationalization is handled using `next-intl`.
  *
  * @component
- * @returns {JSX.Element} Header component
+ * @returns {JSX.Element} Fully styled and localized Header
  */
 export default function Header(): JSX.Element {
   const router = useRouter()
+  const t = useTranslations('header')
+
   const bgColor = useColorModeValue('white', 'gray.800')
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const shadow = useColorModeValue('sm', 'md')
@@ -47,7 +57,10 @@ export default function Header(): JSX.Element {
         justify="space-between"
         gap={{ base: 2, md: 0 }}
       >
-        {/* Branding */}
+        {/**
+         * Branding section with logo text and tagline.
+         * Clickable to navigate to homepage (`/`).
+         */}
         <VStack
           align="start"
           spacing={0}
@@ -59,21 +72,25 @@ export default function Header(): JSX.Element {
             fontWeight="extrabold"
             color="teal.600"
           >
-            Kal
+            {t('brand.main')}
             <Text as="span" color="pink.400">
-              yanam
+              {t('brand.highlight')}
             </Text>
           </Text>
           <Text fontSize="sm" color={textColor}>
-            Modern Connections. Traditional Values.
+            {t('brand.tagline')}
           </Text>
         </VStack>
 
         <Spacer />
 
-        {/* Action Buttons */}
+        {/**
+         * Action buttons: Help (dropdown) and Login
+         */}
         <Flex align="center" gap={2}>
-          {/* Help Dropdown */}
+          {/**
+           * Help menu dropdown with About, Contact, and FAQ links
+           */}
           <Menu>
             <MenuButton
               as={Button}
@@ -81,37 +98,39 @@ export default function Header(): JSX.Element {
               colorScheme="teal"
               leftIcon={<Icon as={HelpCircle} />}
             >
-              Help
+              {t('help')}
             </MenuButton>
             <MenuList>
               <MenuItem
                 icon={<Info size={16} />}
                 onClick={() => router.push('/about')}
               >
-                About Us
+                {t('helpItems.about')}
               </MenuItem>
               <MenuItem
                 icon={<PhoneCall size={16} />}
                 onClick={() => router.push('/contact')}
               >
-                Contact Support
+                {t('helpItems.contact')}
               </MenuItem>
               <MenuItem
                 icon={<MessageCircle size={16} />}
                 onClick={() => router.push('/faq')}
               >
-                FAQ
+                {t('helpItems.faq')}
               </MenuItem>
             </MenuList>
           </Menu>
 
-          {/* Login Button */}
+          {/**
+           * Login button to redirect user to `/login`
+           */}
           <Button
             colorScheme="teal"
             leftIcon={<Icon as={LogIn} />}
             onClick={() => router.push('/login')}
           >
-            Login
+            {t('login')}
           </Button>
         </Flex>
       </Flex>
