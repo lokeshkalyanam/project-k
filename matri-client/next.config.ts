@@ -1,17 +1,29 @@
-/**
- * @type {import('next').NextConfig}
- *
- * Next.js Configuration Object
- * ----------------------------
- * This object contains configuration options for customizing the behavior of your Next.js application.
- */
-const nextConfig = {
-    /**
-     * Enables additional runtime checks and warnings for React.
-     * Useful during development to identify potential problems.
-     * Automatically disabled in production.
-     */
-    reactStrictMode: true,
-}
+// next.config.ts
 
-export default nextConfig
+import createNextIntlPlugin from 'next-intl/plugin';
+
+/**
+ * Creates the Next.js configuration enhanced with `next-intl` support.
+ *
+ * No options are passed to `createNextIntlPlugin()` because it auto-detects
+ * the necessary configuration (e.g., request config location) by convention.
+ * 
+ * For `next-intl@4`, the default paths it looks for are:
+ * - `./i18n.ts`, or
+ * - `./src/i18n.ts`
+ * 
+ * If you're using a custom path, pass it like:
+ * ```ts
+ * createNextIntlPlugin('./src/i18n/config.ts');
+ * ```
+ */
+const withNextIntl = createNextIntlPlugin(); // ✅ Uses default config detection
+
+/**
+ * Final Next.js configuration object wrapped with `next-intl` plugin.
+ *
+ * This also enables React strict mode for catching potential issues.
+ */
+export default withNextIntl({
+    reactStrictMode: true
+});
