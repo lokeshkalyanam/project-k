@@ -1,4 +1,4 @@
-// src/i18n/config.ts
+// src/i18n.ts
 
 /**
  * Supported locales for the application.
@@ -8,7 +8,7 @@
  *
  * @type {readonly string[]}
  */
-export const locales = ['en', 'te', 'hi'] as const;
+export const locales = ['en', 'te', 'hi'];
 
 /**
  * Default locale to be used when no locale is specified in the URL.

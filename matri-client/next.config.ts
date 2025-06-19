@@ -17,7 +17,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
  * createNextIntlPlugin('./src/i18n/config.ts');
  * ```
  */
-const withNextIntl = createNextIntlPlugin(); // ✅ Uses default config detection
+// ✅ Tell it where your request config is
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /**
  * Final Next.js configuration object wrapped with `next-intl` plugin.

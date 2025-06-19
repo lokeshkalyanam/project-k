@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import { locales } from '@/i18n'
 import { NextIntlClientProvider } from 'next-intl'
-import { ChakraProvider } from '@chakra-ui/react'
+import { Providers } from '../providers'
 
 type Props = {
   children: ReactNode
@@ -14,16 +14,20 @@ type Props = {
 /**
  * Locale-specific layout for the application.
  *
- * This layout handles internationalization using `next-intl` and provides Chakra UI theming.
- * It validates the locale param, loads the appropriate translation messages, and wraps the children
- * with both ChakraProvider and NextIntlClientProvider.
+ * This layout is responsible for:
+ * - Validating the dynamic locale parameter from the URL.
+ * - Dynamically loading multiple localized translation message files (e.g., common, home, profile).
+ * - Wrapping the application in global providers including Chakra UI and NextIntl.
  *
- * @component
- * @param {Object} props - Props object.
- * @param {ReactNode} props.children - Nested components to render under the locale layout.
- * @param {{ locale: string }} props.params - Dynamic route params, including the active locale.
+ * It ensures that only supported locales are rendered and falls back to a 404 page
+ * if the provided locale is not valid.
  *
- * @returns {Promise<JSX.Element>} The rendered locale-specific layout.
+ * @function LocaleLayout
+ * @param {Props} props - Component props.
+ * @param {ReactNode} props.children - Nested page or layout components under the locale route.
+ * @param {{ locale: string }} props.params - Route parameters containing the current locale.
+ *
+ * @returns {Promise<JSX.Element>} The fully wrapped application layout with translations and theming.
  */
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await Promise.resolve(params)
@@ -33,16 +37,23 @@ export default async function LocaleLayout({ children, params }: Props) {
     notFound()
   }
 
-  // Dynamically import the messages for the current locale.
-  const messages = (await import(`@/messages/${locale}/common.json`)).default
+  // Dynamically import and merge multiple translation namespaces
+  // const namespaces = ['common', 'home', 'profile']
+  const namespaces = ['common']
+
+  const messages = Object.assign(
+    {},
+    ...(await Promise.all(
+      namespaces.map(async (ns) => {
+        const mod = await import(`@/messages/${locale}/${ns}.json`)
+        return mod.default
+      })
+    ))
+  )
 
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <ChakraProvider>{children}</ChakraProvider>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <Providers>{children}</Providers>
+    </NextIntlClientProvider>
   )
 }
