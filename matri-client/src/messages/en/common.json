@@ -16,5 +16,13 @@
       "faq": "FAQ"
     },
     "login": "Login"
+  },
+  "notFound": {
+    "title": "Oops! Page Not Found",
+    "description": "Looks like you followed a broken link or typed a wrong URL.",
+    "premiumHeading": "🌟 Try MatriConnect Premium",
+    "premiumDescription": "Unlock unlimited likes, profile boosts, and direct messages to your perfect match.",
+    "premiumCTA": "View Premium Plans",
+    "homeButton": "🔙 Go to Homepage"
   }
 }
