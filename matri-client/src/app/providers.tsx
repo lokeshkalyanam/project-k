@@ -2,22 +2,29 @@
 
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from '@/theme'
+import { store } from '@/store'
+import { Provider } from 'react-redux'
 
 /**
- * Global Providers component that wraps the application with Chakra UI's `ChakraProvider`.
+ * Wraps the application in global providers such as Redux and Chakra UI.
  *
- * This ensures Chakra's theming, context, and styling are available throughout the app.
- * Custom theme is imported from `@/theme`.
+ * - `Provider` from react-redux makes the Redux store available to the app.
+ * - `ChakraProvider` applies Chakra UI's theming and styling context globally.
  *
- * @param {Object} props - Props passed to the Providers component.
- * @param {React.ReactNode} props.children - The nested React elements to render within the provider context.
+ * @component
+ * @param {Object} props - Props for the Providers component.
+ * @param {React.ReactNode} props.children - React children elements to be rendered within the providers.
+ * @returns {JSX.Element} The application wrapped in Redux and Chakra UI providers.
  *
- * @returns {JSX.Element} The application wrapped in ChakraProvider with custom theme.
  */
 export function Providers({
   children,
 }: {
   children: React.ReactNode
 }): JSX.Element {
-  return <ChakraProvider theme={theme}>{children}</ChakraProvider>
+  return (
+    <Provider store={store}>
+      <ChakraProvider theme={theme}>{children}</ChakraProvider>
+    </Provider>
+  )
 }
