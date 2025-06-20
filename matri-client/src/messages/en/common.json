@@ -24,5 +24,29 @@
     "premiumDescription": "Unlock unlimited likes, profile boosts, and direct messages to your perfect match.",
     "premiumCTA": "View Premium Plans",
     "homeButton": "🔙 Go to Homepage"
+  },
+  "userRegister": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "password": "Password",
+    "gender": "Gender",
+    "selectGender": "Select Gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "dob": "Date of Birth",
+    "createdFor": "Created For",
+    "selectRelation": "Select Relation",
+    "self": "Self",
+    "son": "Son",
+    "daughter": "Daughter",
+    "sibling": "Sibling",
+    "friend": "Friend",
+    "otpSent": "OTP sent successfully!",
+    "registerFailed": "Registration failed",
+    "submitting": "Submitting...",
+    "submit": "Submit"
   }
 }

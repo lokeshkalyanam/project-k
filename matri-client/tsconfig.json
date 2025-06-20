@@ -4,6 +4,10 @@
     "module": "esnext",
     "jsx": "preserve",
     "moduleResolution": "bundler",
+    "types": [
+      "node",
+      "axios"
+    ],
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -23,6 +27,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
     "plugins": [
       {
         "name": "next"
