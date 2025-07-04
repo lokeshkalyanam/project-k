@@ -1,129 +1,456 @@
-// Prisma client generator
+/// Generates Prisma client for DB access
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
-// PostgreSQL database connection
+/// PostgreSQL datasource
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// ==============================
-// User Model
-// ==============================
+//
+// ─── AUTH & USER CORE ──────────────────────────────────────────────────────────
+//
+
+/// Stores core user auth credentials and metadata
 model User {
-    id                String  @id @default(uuid()) // Primary unique identifier
-    profileId         String  @unique // Profile reference ID (used externally)
-    firstName         String // First name of the user
-    lastName          String // Last name of the user
-    email             String? @unique // Optional but unique email address
-    phone             String? // Optional phone number (can be shared across accounts)
-    passwordHash      String? // Optional hashed password
-    isEmailVerified   Boolean @default(false) // Flag to verify email
-    isPhoneVerified   Boolean @default(false) // Flag to verify phone number
-    isProfileVerified Boolean @default(false) // Admin-approved profile verification
-    isActive          Boolean @default(false) // Controls account access (active/inactive)
+  id              String  @id @default(uuid())
+  email           String? @unique
+  phone           String? @unique
+  passwordHash    String?
+  firebaseUid     String? @unique
+  isEmailVerified Boolean @default(false)
+  isPhoneVerified Boolean @default(false)
+  isActive        Boolean @default(true)
+  isAdmin         Boolean @default(false)
 
-    gender      Gender // Gender (enum)
-    dateOfBirth DateTime // Date of birth
-    createdFor  CreatedFor @default(SELF) // Who the profile was created for (enum)
+  sessions          Session[]
+  otps              Otp[]
+  loginLogs         LoginAuditLog[]
+  userNotifications UserNotification[]
+  profiles          Profile[]
+  Report            Report[]
+  AdminActionLog    AdminActionLog[]
 
-    religion     String? // Optional religion field
-    caste        String? // Optional caste field
-    motherTongue String? // Optional mother tongue
-    height       Float? // Optional height in cm
-    profession   String? // Optional profession or job title
-    city         String? // Optional city
-    state        String? // Optional state
-    country      String? // Optional country
-
-    // Relations
-    sessions          Session[] // Active or past sessions
-    otps              Otp[] // OTP history
-    interestsSent     Interest[] @relation("InterestsSent") // Interests sent to others
-    interestsReceived Interest[] @relation("InterestsReceived") // Interests received from others
-
-    createdAt DateTime @default(now()) // Timestamp of creation
-    updatedAt DateTime @updatedAt // Auto-updated timestamp
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// ==============================
-// OTP Model
-// ==============================
-model Otp {
-    id         String    @id @default(uuid()) // Unique identifier
-    userId     String // Foreign key to User
-    code       String // OTP code
-    type       OtpType // Type of OTP (email or phone)
-    expiresAt  DateTime // Expiration time of OTP
-    verifiedAt DateTime? // When the OTP was verified
-    attempts   Int       @default(0) // How many times it was tried
-    createdAt  DateTime  @default(now()) // Creation timestamp
-
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User
-}
-
-// ==============================
-// Session Model
-// ==============================
+/// Session-based login token for auth
 model Session {
-    id         String   @id @default(uuid()) // Unique session ID
-    userId     String // Foreign key to User
-    ipAddress  String // IP address of the session
-    deviceInfo String // Device metadata
-    userAgent  String // User-Agent string (browser info)
-    createdAt  DateTime @default(now()) // Timestamp of session creation
-    expiresAt  DateTime // When the session expires
+  id         String   @id @default(uuid())
+  userId     String
+  ipAddress  String
+  deviceInfo String
+  userAgent  String
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ==============================
-// Interest Model
-// ==============================
+/// OTP for phone/email verification
+model Otp {
+  id         String    @id @default(uuid())
+  userId     String
+  code       String
+  type       OtpType
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Logs all login attempts (success/fail)
+model LoginAuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  ip        String
+  userAgent String
+  success   Boolean
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+/// Notifications for user (not profile-specific)
+model UserNotification {
+  id     String           @id @default(uuid())
+  userId String
+  type   NotificationType
+  title  String
+  body   String
+  readAt DateTime?
+  sentAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+//
+// ─── PROFILE & MATCHMAKING ─────────────────────────────────────────────────────
+//
+
+/// Represents a matrimonial profile created by user
+model Profile {
+  id        String @id @default(uuid())
+  profileId String @unique
+  userId    String
+
+  firstName   String
+  lastName    String
+  gender      Gender
+  dateOfBirth DateTime
+  createdFor  CreatedFor @default(SELF)
+
+  maritalStatus      MaritalStatus    @default(NEVER_MARRIED)
+  childrenCount      Int?             @default(0)
+  childrenLivingWith UserChildStatus?
+
+  religion              String?
+  caste                 String?
+  subCaste              String?
+  allowOtherCommunities Boolean?     @default(false)
+  hasDosham             Boolean?     @default(false)
+  doshamTypes           DoshamType[]
+
+  familyStatus FamilyStatus?
+  familyType   FamilyType?
+  familyValues FamilyValue?
+
+  height     Float?
+  disability Boolean? @default(false)
+
+  highestEducation String?
+  employedIn       EmploymentType?
+  occupation       String?
+  annualIncome     String?
+
+  country        String?
+  state          String?
+  city           String?
+  citizenship    String?
+  residentStatus String?
+
+  isProfileVerified Boolean   @default(false)
+  isHighlighted     Boolean   @default(false)
+  highlightedUntil  DateTime?
+  isPremium         Boolean   @default(false)
+  premiumUntil      DateTime?
+
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileImages        ProfileImage[]
+  preferences          Preference?
+  horoscope            Horoscope?
+  lifestyle            Lifestyle?
+  trustScore           TrustScore?
+  profileNotifications ProfileNotification[]
+  interestsSent        Interest[]            @relation("ProfileInterestsSent")
+  interestsReceived    Interest[]            @relation("ProfileInterestsReceived")
+  messages             Message[]
+  payments             Payment[]
+  reports              Report[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Profile image with approval and visibility control
+model ProfileImage {
+  id         String          @id @default(uuid())
+  profileId  String
+  url        String
+  isPrimary  Boolean         @default(false)
+  isApproved Boolean         @default(false)
+  visibility ImageVisibility @default(PUBLIC)
+  uploadedAt DateTime        @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+/// Interest requests between profiles
 model Interest {
-    id         String         @id @default(uuid()) // Unique ID for interest record
-    senderId   String // User who sent the interest
-    receiverId String // User who received the interest
-    status     InterestStatus @default(PENDING) // Status of interest (Pending, Accepted, Rejected)
-    createdAt  DateTime       @default(now()) // Timestamp when created
-    updatedAt  DateTime       @updatedAt // Timestamp when last updated
+  id                String         @id @default(uuid())
+  senderProfileId   String
+  receiverProfileId String
+  status            InterestStatus @default(PENDING)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @default(now())
 
-    sender   User @relation("InterestsSent", fields: [senderId], references: [id]) // Sender relation
-    receiver User @relation("InterestsReceived", fields: [receiverId], references: [id]) // Receiver relation
+  sender   Profile @relation("ProfileInterestsSent", fields: [senderProfileId], references: [id])
+  receiver Profile @relation("ProfileInterestsReceived", fields: [receiverProfileId], references: [id])
 }
 
-// ==============================
-// Enums
-// ==============================
+/// Notification related to a profile (e.g., interest received)
+model ProfileNotification {
+  id        String                  @id @default(uuid())
+  profileId String
+  type      ProfileNotificationType
+  title     String
+  body      String
+  readAt    DateTime?
+  sentAt    DateTime                @default(now())
 
-// Gender identity
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+/// Chat messages sent by profile
+model Message {
+  id        String        @id @default(uuid())
+  profileId String
+  content   String
+  sender    MessageSender
+  sentAt    DateTime      @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+//
+// ─── PLANS & PAYMENTS ──────────────────────────────────────────────────────────
+//
+
+/// Payment record of a premium plan for profile
+model Payment {
+  id            String         @id @default(uuid())
+  profileId     String
+  planId        String
+  amount        Int
+  status        PaymentStatus
+  gateway       PaymentGateway
+  transactionId String
+  paidAt        DateTime
+  createdAt     DateTime       @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id])
+  plan    Plan    @relation(fields: [planId], references: [id])
+}
+
+/// Subscription plans available for purchase
+model Plan {
+  id           String   @id @default(uuid())
+  name         String
+  price        Int
+  durationDays Int
+  features     String[]
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  payments Payment[]
+}
+
+//
+// ─── PREFERENCES & ATTRIBUTES ──────────────────────────────────────────────────
+//
+
+/// Preferred partner criteria
+model Preference {
+  id                   String  @id @default(uuid())
+  profileId            String  @unique
+  preferredAgeRangeMin Int?
+  preferredAgeRangeMax Int?
+  preferredCaste       String?
+  preferredEducation   String?
+
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+/// Horoscope details (optional)
+model Horoscope {
+  id        String  @id @default(uuid())
+  profileId String  @unique
+  rasi      String?
+  nakshatra String?
+  gothram   String?
+
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+/// Lifestyle habits for profile
+model Lifestyle {
+  id        String       @id @default(uuid())
+  profileId String       @unique
+  foodHabit FoodHabit?
+  smoking   HabitStatus?
+  drinking  HabitStatus?
+
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+/// Trust score breakdown
+model TrustScore {
+  id          String @id @default(uuid())
+  profileId   String @unique
+  photoScore  Int    @default(0)
+  aadharScore Int    @default(0)
+  socialScore Int    @default(0)
+  overall     Int    @default(0)
+
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+//
+// ─── REPORTING & ADMIN ─────────────────────────────────────────────────────────
+//
+
+/// Reports submitted by users against profiles
+model Report {
+  id        String       @id @default(uuid())
+  profileId String
+  userId    String
+  reason    String
+  status    ReportStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+/// Admin-side audit log for actions (e.g., approve images, ban users)
+model AdminActionLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  action    String
+  target    String?
+  notes     String?
+  createdAt DateTime @default(now())
+
+  admin User @relation(fields: [adminId], references: [id])
+}
+
+//
+// ─── ENUMS ──────────────────────────────────────────────────────────────────────
+//
+
 enum Gender {
-    MALE
-    FEMALE
-    OTHER
+  MALE
+  FEMALE
+  OTHER
 }
 
-// Who the profile was created for
 enum CreatedFor {
-    SELF
-    SON
-    DAUGHTER
-    SIBLING
-    FRIEND
-    OTHER
+  SELF
+  SON
+  DAUGHTER
+  SIBLING
+  FRIEND
+  OTHER
 }
 
-// OTP type
 enum OtpType {
-    PHONE
-    EMAIL
+  PHONE
+  EMAIL
 }
 
-// Interest status enum
 enum InterestStatus {
-    PENDING
-    ACCEPTED
-    REJECTED
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum MaritalStatus {
+  NEVER_MARRIED
+  DIVORCED
+  WIDOWED
+  AWAITING_DIVORCE
+}
+
+enum UserChildStatus {
+  LIVING_WITH_ME
+  NOT_LIVING_WITH_ME
+}
+
+enum FamilyStatus {
+  MIDDLE_CLASS
+  UPPER_MIDDLE_CLASS
+  AFFLUENT
+  RICH
+}
+
+enum FamilyType {
+  JOINT
+  NUCLEAR
+  EXTENDED
+}
+
+enum FamilyValue {
+  TRADITIONAL
+  MODERATE
+  LIBERAL
+}
+
+enum EmploymentType {
+  GOVERNMENT
+  PRIVATE
+  BUSINESS
+  DEFENCE
+  SELF_EMPLOYED
+  NOT_WORKING
+}
+
+enum DoshamType {
+  KUJA
+  NAGA
+  KALA_SARPA
+  RAHU
+  KETHU
+  KALATHRA
+}
+
+enum ImageVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum MessageSender {
+  SELF
+  MATCH
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+  PUSH
+  INAPP
+}
+
+enum ProfileNotificationType {
+  INTEREST_RECEIVED
+  INTEREST_ACCEPTED
+  MESSAGE_RECEIVED
+  MATCH_FOUND
+  PLAN_EXPIRED
+  ADMIN_NOTE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PaymentGateway {
+  RAZORPAY
+  STRIPE
+  CASHFREE
+}
+
+enum FoodHabit {
+  VEGETARIAN
+  NON_VEGETARIAN
+  EGGETARIAN
+  VEGAN
+}
+
+enum HabitStatus {
+  YES
+  NO
+  OCCASIONALLY
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  REJECTED
 }
